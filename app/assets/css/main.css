@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+
+:root {
+    --ui-primary: green;
+  --ui-header-height: 40px;
+
+  --ui-container: 100%;
+}
