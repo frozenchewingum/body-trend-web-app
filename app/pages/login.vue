@@ -1,16 +1,9 @@
 <script setup lang="ts">
-const supabase = useSupabaseClient()
-const user = useSupabaseUser()
 
+import type { LoginCredential } from '~/types/auth';
+import * as z from 'zod';
 
-const sign = ref<'in' | 'up'>('in')
-
-watchEffect(() => {
-  if (user.value) {
-    return navigateTo('/')
-  }
-})
-
+const { signIn } = useAuth();
 const fields = [{
   name: 'email',
   type: 'text' as const,
@@ -38,29 +31,19 @@ const fields = [{
 //   },
 // }]
 
-const signIn = async (email: string, password: string) => {
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  })
- 
+const onSubmit = async (payload: any) => {
+  try {
+    await signIn(payload.data as LoginCredential);
+    console.log('navigate')
+    navigateTo('/');
+  } catch(error: any)  {
+    console.log(error)
+  }
+  
 }
 
-const signUp = async (email: string, password: string) => {
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-  })
-  // confirm email before login
-    //await signIn(email, password)
-}
-
-async function onSubmit(payload: any) {
-  const email = payload.data.email
-  const password = payload.data.password
-
-  if (sign.value === 'in') await signIn(email, password)
-  else await signUp(email, password);
+const navigateSignup = () => {
+  navigateTo('/signup');
 }
 
 </script>
@@ -69,7 +52,7 @@ async function onSubmit(payload: any) {
   <UContainer class="h-[calc(100vh-var(--ui-header-height))] flex items-center justify-center px-4">
     <UPageCard class="max-w-sm w-full">
       <UAuthForm
-        :title="sign === 'in' ? 'Login' : 'Sign up'"
+        title="Login"
         icon="i-lucide-user"
         :fields="fields"
         @submit="onSubmit"
@@ -77,13 +60,13 @@ async function onSubmit(payload: any) {
         <template
           #description
         >
-          {{ sign === 'up' ? 'Already have an account?' : 'Don\'t have an account?' }}
+          {{'Don\'t have an account?'}}
           <UButton
             variant="link"
             class="p-0"
-            @click="sign = sign === 'up' ? 'in' : 'up'"
+            @click="navigateSignup"
+            label="Sign Up"
           >
-            {{ sign === 'in' ? 'Sign up' : 'Sign in' }}
           </UButton>.
         </template>
       </UAuthForm>

@@ -1,40 +1,22 @@
 <script setup lang="ts">
-const client = useSupabaseClient()
-const user = useSupabaseUser()
-
+const { loading, isLoggedIn, signOut } = useAuth();
 const logout = async () => {
-  await client.auth.signOut()
-  navigateTo('/login')
+  try {
+    await signOut();
+    navigateTo('/login')
+  } catch(error: any) {
+
+  }
 }
 </script>
 
 <template>
   <UHeader :toggle="false">
-    <template #left>
-      <UButton
-        label="Source"
-        target="_blank"
-        variant="link"
-        color="neutral"
-        to="https://github.com/nuxt-modules/supabase/tree/main/demo"
-        icon="i-lucide-external-link"
-      />
-      <UButton
-        label="Hosted on Vercel"
-        target="_blank"
-        variant="link"
-        color="neutral"
-        to="https://vercel.com"
-        icon="i-lucide-external-link"
-        class="hidden sm:flex"
-      />
-    </template>
-
     <template #right>
       <UColorModeButton variant="link" />
 
       <UButton
-        v-if="user"
+        v-if="!loading && isLoggedIn"
         variant="link"
         color="primary"
         @click="logout"

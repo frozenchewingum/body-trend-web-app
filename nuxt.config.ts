@@ -2,6 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  ssr: false,
   modules: ['@nuxt/ui','@nuxtjs/supabase'],
   css: ['~/assets/css/main.css'],
   compatibilityDate: '2025-07-15',
@@ -16,4 +17,7 @@ export default defineNuxtConfig({
       title: 'Body Trend Web App'
     }
   },
+  supabase: {
+    redirect: false
+  }
 })

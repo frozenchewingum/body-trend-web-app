@@ -28,4 +28,9 @@ useSeoMeta({
   description,
   ogDescription: description,
 })
+
+const { init } = useAuth();
+onMounted(() => {
+  init();
+})
 </script>
