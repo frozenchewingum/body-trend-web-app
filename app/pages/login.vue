@@ -1,5 +1,7 @@
 <script setup lang="ts">
-
+definePageMeta({
+  public: true
+})
 import type { LoginCredential } from '~/types/auth';
 import * as z from 'zod';
 
@@ -35,7 +37,7 @@ const onSubmit = async (payload: any) => {
   try {
     await signIn(payload.data as LoginCredential);
     console.log('navigate')
-    navigateTo('/');
+    navigateTo('/dashboard');
   } catch(error: any)  {
     console.log(error)
   }

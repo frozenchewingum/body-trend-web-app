@@ -12,6 +12,7 @@ const logout = async () => {
 
 <template>
   <UHeader :toggle="false">
+    <template #left><div>Body Trend</div></template>
     <template #right>
       <UColorModeButton variant="link" />
 

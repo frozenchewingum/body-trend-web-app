@@ -30,7 +30,5 @@ useSeoMeta({
 })
 
 const { init } = useAuth();
-onMounted(() => {
-  init();
-})
+await init();
 </script>

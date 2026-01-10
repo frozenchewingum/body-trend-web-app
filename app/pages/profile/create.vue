@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '#ui/types'
 
-definePageMeta({
-  middleware: ['auth'] // ❗ DO NOT include profile middleware here
-})
-
 const { createProfile, loading, error } = useUserProfile()
 
 const form = reactive({

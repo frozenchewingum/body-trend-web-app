@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-
+definePageMeta({
+  public: true
+})
 import type { AuthFormField } from '@nuxt/ui';
 import type { SignupCredential } from '~/types/auth';
 const supabase = useSupabaseClient()
@@ -33,11 +35,23 @@ const fields = ref<AuthFormField[]>([
 const onSubmit = async (payload: any) => {
   await signUp(payload.data as SignupCredential);
 }
-
+const navigateLogin = () => {
+  navigateTo('/login');
+}
 </script>
 <template>
   <div class="sign-up-view">
-    <UAuthForm title="Sign Up" :fields="fields" class="max-w-sm" @submit="onSubmit"></UAuthForm>
+    <UContainer class="h-[calc(100vh-var(--ui-header-height))] flex items-center justify-center px-4">
+      <UPageCard class="max-w-sm w-full">
+        <UAuthForm title="Sign Up" icon="i-lucide-user" :fields="fields" class="max-w-sm" @submit="onSubmit">
+          <template #description>
+            {{ 'Already have an account?' }}
+            <UButton variant="link" class="p-0" @click="navigateLogin" label="Login">
+            </UButton>.
+          </template>
+        </UAuthForm>
+      </UPageCard>
+    </UContainer>
   </div>
 </template>
 <style></style>
