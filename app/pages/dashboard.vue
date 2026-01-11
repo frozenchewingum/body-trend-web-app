@@ -7,11 +7,12 @@ import { useAuth } from '~/composables/useAuth'
 import { useUserProfile } from '~/composables/useUserProfile'
 import { useOverlay, useToast } from '#imports'
 import { AddMetricModal } from '#components'
-import type { BodyMetricInsert } from '~/types/bodyMetric'
+import type { BodyMetric } from '~/types/bodyMetric'
 import type { TableColumn } from '@nuxt/ui'
 
 const { user, initialized } = useAuth()
 const { profile, fetchProfile } = useUserProfile()
+const { metrics, fetchMetrics } = useBodyMetrics();
 
 // Toast & overlay
 const toast = useToast()
@@ -39,7 +40,15 @@ const loadData = async () => {
     loadingMetrics.value = false
 }
 
-watchEffect(loadData)
+watchEffect(async () => {
+    await fetchProfile()
+    loadingMetrics.value = true;
+    await fetchMetrics().finally(() => {
+        loadingMetrics.value = false;
+    })
+
+
+})
 
 // Open the Add Metric modal
 const openMetricModal = async () => {
@@ -60,15 +69,26 @@ const openMetricModal = async () => {
 const navigateEditProfile = () => {
     navigateTo('/profile/edit')
 }
+type DataMetricColumn = Omit<TableColumn<BodyMetric>, 'accessorKey' | 'id'> & {
+  accessorKey: keyof BodyMetric
+}
 
-const columns: TableColumn<any>[] = [
+type DisplayMetricColumn = Omit<TableColumn<BodyMetric>, 'accessorKey'> & {
+  id: string
+  accessorKey?: never
+}
+
+export type MetricColumn = DataMetricColumn | DisplayMetricColumn
+const columns: MetricColumn[] = [
     { accessorKey: 'recorded_at', header: 'Date' },
     { accessorKey: 'weight_kg', header: 'Weight (kg)' },
-    { accessorKey: 'bmi', header: 'BMI' },
     { accessorKey: 'body_fat_percent', header: 'Body Fat %' },
-    { accessorKey: 'muscle_mass_kg', header: 'Muscle Mass (kg)' },
+    { accessorKey: 'visceral_fat', header: 'Visceral Fat' },
     { accessorKey: 'bone_mass_kg', header: 'Bone Mass (kg)' },
-    { accessorKey: 'visceral_fat', header: 'Visceral Fat' }
+    { accessorKey: 'basal_metabolic_rate', header: 'Muscle Mass (kg)' },
+    { accessorKey: 'muscle_mass_kg', header: 'Muscle Mass (kg)' },
+    { accessorKey: 'body_water_percent', header: 'Muscle Mass (kg)' },
+    { accessorKey: 'physique_rating', header: 'Physique Rating' },
 ]
 </script>
 
@@ -97,18 +117,19 @@ const columns: TableColumn<any>[] = [
 
             <div v-if="loadingMetrics" class="text-center text-gray-500">Loading metrics...</div>
 
-            <UTable v-if="!loadingMetrics" :data="bodyMetrics" :columns="columns" row-key="id" striped hover>
+            <UTable v-if="!loadingMetrics && metrics.length > 0" :data="metrics" :columns="columns" row-key="id" striped
+                hover>
                 <!-- Custom cell slots if needed -->
                 <template #recorded_at-cell="{ row }">
-                    <NuxtTime :datetime="row.original.recorded_at" />
+                    <NuxtTime v-if="row.original.recorded_at" :datetime="row.original.recorded_at" />
                 </template>
 
                 <template #weight_kg-cell="{ row }">
                     {{ row.original.weight_kg ?? '-' }}
                 </template>
 
-                <template #bmi-cell="{ row }">
-                    {{ row.original.bmi ?? '-' }}
+                <template #physique-rating-cell="{ row }">
+                    {{ row.original.physique_rating ?? '-' }}
                 </template>
 
                 <template #body_fat_percent-cell="{ row }">

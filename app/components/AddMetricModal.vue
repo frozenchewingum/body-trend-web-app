@@ -53,15 +53,15 @@ const metricFields = ref<MetricField[]>([
 
 const metricSchema = z.object({
   recorded_at: z.iso.date(),
-  weight_kg: z.number('Must be more than 0, less than 1000').min(0).max(1000),
-  body_fat_percent: z.number('Must be more than 0, less than 100').min(0).max(100),
-  visceral_fat: z.number('Must be more than 0, less than 100').min(0).max(100),
-  bone_mass_kg: z.number('Must be more than 0').min(0),
-  basal_metabolic_rate: z.number('Must be more than 0').min(0),
-  metabolic_age: z.number('Must be more than 0').min(0),
-  muscle_mass_kg: z.number('Must be more than 0').min(0),
-  physique_rating: z.number('Must be more than 1, less than 9').min(1).max(9),
-  body_water_percent: z.number('Must be more than 0, less than 100').min(0).max(100),
+  weight_kg: z.number('Weight is required').min(0, 'Weight must be more than 0 kg').max(1000, 'Weight must be less than 1000 kg'),
+  body_fat_percent: z.number('Body Fat is required').min(0, 'Body Fat must be more than 0%').max(100, 'Body Fat must be less than 100%'),
+  visceral_fat: z.number('Visceral Fat is required').min(0, 'Visceral Fat must be more than 0').max(100, 'Visceral Fat must be less than 100'),
+  bone_mass_kg: z.number('Bone Mass is required').min(0,'Bone Mass must be more than 0 kg'),
+  basal_metabolic_rate: z.number('Basal Metablic Rate is required').min(0, 'Basal Metabolic Rate must be more than 0 kcal'),
+  metabolic_age: z.number('Metabolic Age is required').min(0, 'Metabolic Age must be more than 0'),
+  muscle_mass_kg: z.number('Muscle Mass is required').min(0,'Muscle Mass must be more than 0 kg'),
+  physique_rating: z.number('Physique rating is required').min(1, 'Physique Rating must be more than 1').max(9, 'Physique Rating must be less than 9'),
+  body_water_percent: z.number('Body Water is required').min(0, 'Body Water must be more than 0%').max(100, 'Body Water must be less than 100%'),
 })
 
 type MetricSchema = z.output<typeof metricSchema>;
@@ -87,7 +87,14 @@ const metricState = reactive<Partial<MetricSchema>>({
         <UForm ref="form" :schema="metricSchema" :state="metricState" @submit="onSubmit" id="add-metric-form" :validate-on="['change']">
           <div v-for="field in metricFields">
             <UFormField :label="field.label" :name="field.name" :required="field.required">
+              <template v-if="field.key === 'visceral_fat'">
+                  <UInputNumber v-model="metricState[field.key]" :step="0.5" :format-options="{
+                    minimumFractionDigits: 1
+                  }" />
+              </template>
+              <template v-else>
                 <UInput v-model="metricState[field.key]" :type="field.type" @change="(e)=> { console.log(e)}"/>
+                </template>
             </UFormField>
           </div>
         </UForm>
