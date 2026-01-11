@@ -10,7 +10,7 @@ export default defineNuxtRouteMiddleware((to) => {
 
 
   // Wait until auth is initialized
-  if (!loading.value) return
+  if (loading.value) return
 
   // Redirect if not logged in
   if (!user.value) {

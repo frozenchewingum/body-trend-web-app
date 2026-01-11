@@ -45,21 +45,7 @@ watchEffect(loadData)
 const openMetricModal = async () => {
     if (!user.value) return
 
-    const instance = metricModal.open({
-        metric: {
-            user_id: user.value.id,
-            weight_kg: null,
-            bmi: null,
-            body_fat_percent: null,
-            body_water_percent: null,
-            muscle_mass_kg: null,
-            bone_mass_kg: null,
-            visceral_fat: null,
-            basal_metabolic_rate: null,
-            metabolic_age: null,
-            recorded_at: new Date().toISOString().slice(0, 10),
-        } as BodyMetricInsert
-    })
+    const instance = metricModal.open()
 
     const saved = await instance.result
     if (saved) {
@@ -89,7 +75,7 @@ const columns: TableColumn<any>[] = [
 <template>
     <div class="space-y-8 p-6">
         <!-- Profile Card -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="p-6 rounded-lg shadow-md">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold">Welcome, {{ profile?.first_name ?? 'User' }}</h2>
                 <UButton label="Edit Profile" color="primary" variant="outline" @click="navigateEditProfile" />
@@ -98,12 +84,12 @@ const columns: TableColumn<any>[] = [
                 <div><strong>Full Name:</strong> {{ profile?.first_name }} {{ profile?.last_name }}</div>
                 <div><strong>Gender:</strong> {{ profile?.gender }}</div>
                 <div><strong>Birth Date:</strong> {{ profile?.birth_date }}</div>
-                <div><strong>Height (cm):</strong> {{ profile?.height_cm }}</div>
+                <div><strong>Height:</strong> {{ profile?.height_cm }} cm</div>
             </div>
         </div>
 
         <!-- Body Metrics -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="p-6 rounded-lg shadow-md">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold">Body Metrics</h2>
                 <UButton label="Add Metric" color="primary" @click="openMetricModal" />
@@ -114,7 +100,7 @@ const columns: TableColumn<any>[] = [
             <UTable v-if="!loadingMetrics" :data="bodyMetrics" :columns="columns" row-key="id" striped hover>
                 <!-- Custom cell slots if needed -->
                 <template #recorded_at-cell="{ row }">
-                    {{ row.original.recorded_at }}
+                    <NuxtTime :datetime="row.original.recorded_at" />
                 </template>
 
                 <template #weight_kg-cell="{ row }">

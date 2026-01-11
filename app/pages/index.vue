@@ -6,15 +6,10 @@ const { user, loading } = useAuth()
 
 onMounted(async () => {
   // Minimum splash duration
-  await new Promise(resolve => setTimeout(resolve, 2000))
-
-  // Wait until auth is ready
-  // while (!loading.value) {
-  //   await new Promise(resolve => setTimeout(resolve, 50))
-  // }
+  await new Promise(resolve => setTimeout(resolve, 1000))
 
   if (user.value) {
-    navigateTo('/')
+    navigateTo('/dashboard')
   } else {
     navigateTo('/login')
   }
@@ -26,7 +21,7 @@ onMounted(async () => {
     <div class="text-center space-y-4">
       <UIcon name="i-lucide-heart-pulse" class="text-primary text-5xl" />
       <p class="text-lg font-medium">Loading your health dashboard…</p>
-      <USpinner size="lg" />
+      <NuxtLoadingIndicator />
     </div>
   </div>
 </template>

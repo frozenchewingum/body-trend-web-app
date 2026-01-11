@@ -66,7 +66,7 @@ const submit = async (event: FormSubmitEvent<typeof form>) => {
         <UFormField  label="Gender" name="gender" required>
           <USelect
             v-model="form.gender"
-            :items="['male', 'female', 'other']"
+            :items="['Male', 'Female', 'Prefer not to say']"
             placeholder="Select gender"
           />
         </UFormField >
