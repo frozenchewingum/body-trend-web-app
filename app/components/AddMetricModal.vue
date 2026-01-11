@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { BodyMetricInsert } from "~/types/bodyMetric";
-import { ref, reactive, toRaw } from "vue";
+import { ref, reactive } from "vue";
 import { useBodyMetrics } from "~/composables/useBodyMetrics";
 import * as z from 'zod';
 import { UForm } from "#components";
